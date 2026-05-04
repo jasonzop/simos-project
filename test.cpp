@@ -8,13 +8,12 @@ int main()
     SimOS sim(1, 1024, 64);
 
     sim.NewProcess(); // PID 1
-    sim.NewProcess(); // PID 2
-    sim.NewProcess(); // PID 3
+    sim.SimFork();    // PID 2 child of 1
 
-    sim.DiskReadRequest(0, "one.txt"); // PID 1 on disk
-    sim.DiskReadRequest(0, "two.txt"); // PID 2 in disk queue
+    sim.TimerInterrupt(); // PID 2 runs
+    sim.DiskReadRequest(0, "child.txt"); // PID 2 goes to disk
 
-    sim.SimExit(); // PID 3 exits
+    sim.SimExit(); // PID 1 exits, should kill child PID 2 from disk
 
     std::cout << "CPU: " << sim.GetCPU() << std::endl;
     std::cout << "Disk current PID: " << sim.GetDisk(0).PID << std::endl;
