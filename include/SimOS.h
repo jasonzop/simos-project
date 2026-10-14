@@ -1,5 +1,3 @@
-// Jason Parmar
-
 #ifndef SIMOS_H
 #define SIMOS_H
 
@@ -40,11 +38,11 @@ public:
     void DiskJobCompleted(int diskNumber);
     void AccessMemoryAddress(unsigned long long address);
 
-    int GetCPU();
-    std::deque<int> GetReadyQueue();
-    MemoryUsage GetMemory();
-    FileReadRequest GetDisk(int diskNumber);
-    std::deque<FileReadRequest> GetDiskQueue(int diskNumber);
+    [[nodiscard]] int GetCPU() const;
+    [[nodiscard]] std::deque<int> GetReadyQueue() const;
+    [[nodiscard]] MemoryUsage GetMemory() const;
+    [[nodiscard]] FileReadRequest GetDisk(int diskNumber) const;
+    [[nodiscard]] std::deque<FileReadRequest> GetDiskQueue(int diskNumber) const;
 
 private:
     struct Process
@@ -83,7 +81,7 @@ private:
     std::unordered_map<int, Process> processes;
 
     void CheckCPU();
-    void CheckDisk(int diskNumber);
+    void CheckDisk(int diskNumber) const;
     void ScheduleCPU();
     void RemoveFromReadyQueue(int pid);
     void RemoveFromDisks(int pid);
