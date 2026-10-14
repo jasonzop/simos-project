@@ -1,0 +1,6 @@
+BasedOnStyle: LLVM
+BreakBeforeBraces: Allman
+ColumnLimit: 100
+IndentWidth: 4
+PointerAlignment: Left
+SortIncludes: CaseSensitive

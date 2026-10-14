@@ -1,16 +1,25 @@
-// Jason Parmar
-
 #include "SimOS.h"
 
 SimOS::SimOS(int numberOfDisks, unsigned long long amountOfRAM, unsigned int pageSize)
+    : cpu(NO_PROCESS),
+      nextPid(1),
+      pageSizeValue(pageSize),
+      frameCount(0),
+      timer(0)
 {
-    cpu = NO_PROCESS;
-    nextPid = 1;
-    pageSizeValue = pageSize;
-    timer = 0;
+    if (numberOfDisks < 0)
+    {
+        throw std::invalid_argument("Number of disks cannot be negative");
+    }
+
+    if (pageSize == 0)
+    {
+        throw std::invalid_argument("Page size must be greater than zero");
+    }
 
     frameCount = amountOfRAM / pageSize;
-    disks.resize(numberOfDisks);
+    disks.resize(static_cast<std::size_t>(numberOfDisks));
+    frames.reserve(static_cast<std::size_t>(frameCount));
 
     for (unsigned long long i = 0; i < frameCount; ++i)
     {
@@ -28,7 +37,7 @@ void SimOS::CheckCPU()
     }
 }
 
-void SimOS::CheckDisk(int diskNumber)
+void SimOS::CheckDisk(int diskNumber) const
 {
     if (diskNumber < 0 || diskNumber >= static_cast<int>(disks.size()))
     {
@@ -387,17 +396,17 @@ void SimOS::AccessMemoryAddress(unsigned long long address)
     frames[lruIndex].lastUsed = timer;
 }
 
-int SimOS::GetCPU()
+int SimOS::GetCPU() const
 {
     return cpu;
 }
 
-std::deque<int> SimOS::GetReadyQueue()
+std::deque<int> SimOS::GetReadyQueue() const
 {
     return readyQueue;
 }
 
-MemoryUsage SimOS::GetMemory()
+MemoryUsage SimOS::GetMemory() const
 {
     MemoryUsage memory;
 
@@ -417,13 +426,13 @@ MemoryUsage SimOS::GetMemory()
     return memory;
 }
 
-FileReadRequest SimOS::GetDisk(int diskNumber)
+FileReadRequest SimOS::GetDisk(int diskNumber) const
 {
     CheckDisk(diskNumber);
     return disks[diskNumber].current;
 }
 
-std::deque<FileReadRequest> SimOS::GetDiskQueue(int diskNumber)
+std::deque<FileReadRequest> SimOS::GetDiskQueue(int diskNumber) const
 {
     CheckDisk(diskNumber);
     return disks[diskNumber].queue;
